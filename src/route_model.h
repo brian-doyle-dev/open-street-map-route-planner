@@ -26,6 +26,15 @@ class RouteModel : public Model {
         Node(){}
         Node(int idx, RouteModel * search_model, Model::Node node) : Model::Node(node), parent_model(search_model), index(idx) {}
 
+        // These operator overloads just compare the x and y values. This indicates whether
+        // the nodes are in the same location or not. It does not indicate whether the nodes are exactly equal or not.
+        // Mabye it would be better to define a new function to do the comparison rather than overload
+        // the operators.
+        bool operator==(Node& other){ return ( ((*this).x == other.x)) && 
+                                                ((*this).y == other.y);}
+        bool operator!=(Node& other){ return ( !((*this).x) == other.x) ||
+                                              !((*this).y == other.y);}
+
       private:
         int index;
         Node * FindNeighbor(std::vector<int> node_indices);

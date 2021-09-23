@@ -5,6 +5,7 @@
 #include <vector>
 #include "../src/route_model.h"
 #include "../src/route_planner.h"
+#include "../src/user_input.h"
 
 
 static std::optional<std::vector<std::byte>> ReadFile(const std::string &path)
@@ -122,3 +123,4 @@ TEST_F(RoutePlannerTest, TestAStarSearch) {
     EXPECT_FLOAT_EQ(end_node->y, path_end.y);
     EXPECT_FLOAT_EQ(route_planner.GetDistance(), 873.41565);
 }
+

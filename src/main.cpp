@@ -7,6 +7,7 @@
 #include "route_model.h"
 #include "render.h"
 #include "route_planner.h"
+#include "user_input.h"
 
 using namespace std::experimental;
 
@@ -52,43 +53,36 @@ int main(int argc, const char **argv)
             osm_data = std::move(*data);
     }
     
-    // TODO 1: Declare floats `start_x`, `start_y`, `end_x`, and `end_y` and get
-    // user input for these values using std::cin. Pass the user input to the
-    // RoutePlanner object below in place of 10, 10, 90, 90.
+    bool valid_input;
     float start_x;
     float start_y;
     float end_x;
     float end_y;
 
-    std::cout <<"Please enter the start coordinates for the search\n";
-    std::cout << "Start X: ";
-    std::cin >> start_x;
-    std::cout << "Start Y: ";
-    std::cin >> start_y;
-    std::cout <<"Please enter the end coordinates for the search\n";
-    std::cout << "End X: ";
-    std::cin >> end_x;
-    std::cout << "End Y: ";
-    std::cin >>  end_y;
+    valid_input = GetUserInput(&start_x, &start_y, &end_x, &end_y);
 
-    // Build Model.
-    RouteModel model{osm_data};
+    // Only do the search if we have valid inputs from the user
+    if (valid_input)
+    {
+        // Build Model.
+        RouteModel model{osm_data};
 
-    // Create RoutePlanner object and perform A* search.
-    RoutePlanner route_planner{model, start_x, start_y, end_x, end_y};
-    route_planner.AStarSearch();
+        // Create RoutePlanner object and perform A* search.
+        RoutePlanner route_planner{model, start_x, start_y, end_x, end_y};
+        route_planner.AStarSearch();
 
-    std::cout << "Distance: " << route_planner.GetDistance() << " meters. \n";
+        std::cout << "Distance: " << route_planner.GetDistance() << " meters. \n";
 
-    // Render results of search.
-    Render render{model};
+        // Render results of search.
+        Render render{model};
 
-    auto display = io2d::output_surface{400, 400, io2d::format::argb32, io2d::scaling::none, io2d::refresh_style::fixed, 30};
-    display.size_change_callback([](io2d::output_surface& surface){
-        surface.dimensions(surface.display_dimensions());
-    });
-    display.draw_callback([&](io2d::output_surface& surface){
-        render.Display(surface);
-    });
-    display.begin_show();
+        auto display = io2d::output_surface{400, 400, io2d::format::argb32, io2d::scaling::none, io2d::refresh_style::fixed, 30};
+        display.size_change_callback([](io2d::output_surface& surface){
+            surface.dimensions(surface.display_dimensions());
+        });
+        display.draw_callback([&](io2d::output_surface& surface){
+            render.Display(surface);
+        });
+        display.begin_show();
+    }
 }
